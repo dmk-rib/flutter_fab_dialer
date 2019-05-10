@@ -14,3 +14,7 @@
 * Skipped version 0.1.2 to match actual package version
 * Added ability to close on tap
 * Modified dependencies
+
+## [0.1.4] - 05/10/2019
+
+* Fixed overflow on smaller screens

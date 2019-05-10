@@ -88,7 +88,6 @@ class FabDialerState extends State<FabDialer> with TickerProviderStateMixin {
       ? Icon(Icons.close)
       : _closeFabIcon;
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: <Widget>[

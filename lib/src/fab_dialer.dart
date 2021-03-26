@@ -2,7 +2,7 @@ part of fab_dialer;
 
 class FabDialer extends StatefulWidget {
   const FabDialer(this._fabMiniMenuItemList, this._fabColor, this._fabIcon,
-    [this._closeFabIcon, this._animationDuration, this.closeOnTap]);
+      [this._closeFabIcon = const Icon(Icons.close), this._animationDuration = 180, this.closeOnTap = false]);
 
   final List<FabMiniMenuItem> _fabMiniMenuItemList;
   final Color _fabColor;
@@ -14,34 +14,26 @@ class FabDialer extends StatefulWidget {
 
   @override
   FabDialerState createState() =>
-    FabDialerState(
-      _fabMiniMenuItemList, _fabColor, _fabIcon, _closeFabIcon,
-      _animationDuration, closeOnTap);
+      FabDialerState(
+        _fabMiniMenuItemList, 
+        _animationDuration, closeOnTap);
 }
 
 class FabDialerState extends State<FabDialer> with TickerProviderStateMixin {
-  FabDialerState(this._fabMiniMenuItemList, this._fabColor, this._fabIcon,
-    this._closeFabIcon, this._animationDuration, this.closeOnTap);
+  FabDialerState(this._fabMiniMenuItemList, this._animationDuration, this.closeOnTap);
 
   bool _isRotated = false;
   final List<FabMiniMenuItem> _fabMiniMenuItemList;
-  final Color _fabColor;
-  final Icon _fabIcon;
-  final Icon _closeFabIcon;
   final int _animationDuration;
   final bool closeOnTap;
-  List<FabMenuMiniItemWidget> _fabMenuItems;
-
-  AnimationController _controller;
+  late List<FabMenuMiniItemWidget> _fabMenuItems;
+  late AnimationController _controller;
 
   @override
   void initState() {
-    final int animationDuration = _animationDuration == null
-      ? 180
-      : _animationDuration;
     _controller = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: animationDuration),
+      duration: Duration(milliseconds: _animationDuration),
     );
 
     _controller.reverse();
@@ -51,21 +43,21 @@ class FabDialerState extends State<FabDialer> with TickerProviderStateMixin {
   }
 
   void setFabMenu(List<FabMiniMenuItem> fabMenuList) {
-    List<FabMenuMiniItemWidget> fabMenuItems = List();
+    var fabMenuItems = <FabMenuMiniItemWidget>[];
     for (int i = 0; i < _fabMiniMenuItemList.length; i++) {
       fabMenuItems.add(FabMenuMiniItemWidget(
-        tooltip: _fabMiniMenuItemList[i].tooltip,
-        text: _fabMiniMenuItemList[i].text,
-        elevation: _fabMiniMenuItemList[i].elevation,
-        icon: _fabMiniMenuItemList[i].icon,
-        index: i,
-        onPressed: _fabMiniMenuItemList[i].onPressed,
-        textColor: _fabMiniMenuItemList[i].textColor,
-        fabColor: _fabMiniMenuItemList[i].fabColor,
-        chipColor: _fabMiniMenuItemList[i].chipColor,
-        controller: _controller,
-        closeOnPress: closeOnTap,
-				close: _rotate
+          tooltip: _fabMiniMenuItemList[i].tooltip,
+          text: _fabMiniMenuItemList[i].text,
+          elevation: _fabMiniMenuItemList[i].elevation,
+          icon: widget._fabMiniMenuItemList[i].icon,
+          index: i,
+          onPressed: _fabMiniMenuItemList[i].onPressed,
+          textColor: _fabMiniMenuItemList[i].textColor,
+          fabColor: widget._fabMiniMenuItemList[i].fabColor,
+          chipColor: _fabMiniMenuItemList[i].chipColor,
+          controller: _controller,
+          closeOnPress: closeOnTap,
+          close: _rotate
       ));
     }
 
@@ -84,39 +76,39 @@ class FabDialerState extends State<FabDialer> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    final Icon closeIcon = _closeFabIcon == null
-      ? Icon(Icons.close)
-      : _closeFabIcon;
+    setFabMenu(this._fabMiniMenuItemList);
+
     return Container(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: _fabMenuItems,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              AnimatedBuilder(
-                animation: _controller,
-                builder: (BuildContext _, Widget child) {
-                  return FloatingActionButton(
-                    child: Transform(
-                      transform: Matrix4.rotationZ(
-                        (2 * Math.pi) * _controller.value),
-                      alignment: Alignment.center,
-                      child: _controller.value >= 0.5
-                        ? closeIcon
-                        : _fabIcon,
-                    ),
-                    backgroundColor: _fabColor,
-                    onPressed: _rotate);
-                },
-              )
-            ],
-          ),
-        ],
-      ));
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: _fabMenuItems,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                AnimatedBuilder(
+                  animation: _controller,
+                  builder: (BuildContext _, Widget? child) {
+                    return FloatingActionButton(
+                        child: Transform(
+                          transform: Matrix4.rotationZ(
+                              (2 * Math.pi) * _controller.value),
+                          alignment: Alignment.center,
+                          child: _controller.value >= 0.5
+                              ? widget._closeFabIcon
+                              : widget._fabIcon,
+                        ),
+                        backgroundColor: widget._fabColor,
+                        onPressed: _rotate);
+                  },
+                )
+              ],
+            ),
+          ],
+        ));
   }
 }

@@ -5,3 +5,5 @@
 .pub/
 packages
 pubspec.lock
+/.vs
+/.dart_tool
